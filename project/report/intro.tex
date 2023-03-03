@@ -1,0 +1,31 @@
+Markov chain Monte Carlo (MCMC) has become a popular method in solving complicated statistical problems.
+MCMC is particularly useful in Bayesian analysis, where complex and high dimensional integrals are involved in obtaining posterior distributions \cite{Cowles1996}. 
+One application of MCMC is Bayesian analysis of Markov random field (MRF), which is considered as a set of random variables that have Markov property. 
+A MRF can be regular or irregular, and based on the individual sites and associated random variables, it can be further classified into different groups \cite{Besag1993}.
+MRF is extensively used to model studies in imaging processing.
+
+Bayesian image analysis includes the removal of noise of an image, the generation of better image from an original noisy image, the restoration of multi-dimensional images from lower dimensional images and etc. 
+Besag \textit{et al.} pointed out the often neglected area in Bayesian image analysis that is indeed useful and important -- image restoration \cite{Besag1991}. 
+Our project explores the application of this particular practical importance. 
+
+Bayesian image analysis uses probability models to incorporate the specific prior knowledge into a defined image. 
+Hammersley and Clifford Theorem \cite{Hammersley1971}, first proved in an unpublished work by John Hammersley and Peter Clifford in 1971, is the key to construct proper model through the conditional probability distribution in MRF-related image restoration problems.
+Using this theorem, we can specify the joint distribution of pixels to a normalizing constant \cite{Givens}.
+
+There are a variety of schemes for lattice systems, among which binary, Gaussian, auto-binomial, auto-Poisson, and auto-exponential schemes are quite common. 
+Julian Besag have done extensive studies in the field, and more detailed review of each of the case can be read in \cite{Besag1993}.
+Our project is a Gaussian scheme, which models the joint distribution to a multivariate normal distribution.
+
+The central problem in MRF is that there is no direct method to simulate general multivariate distributions \cite{Besag1993}, so algorithm that is based on the corresponding univariate local information is quite helpful. 
+Our project deals with one of the easiest scenarios in MRF, where the lattice is regular and the pixel image is as small as 20 $\times$ 20, which in real life is unrealistic to encounter. 
+However, even with this small number of pixels, it could already create an enormous number of terms in the conditional probability calculation. 
+Hence, MCMC can be used in this case to overcome the difficulty of computational burden. 
+
+In particular, Gibbs sampling, one of the MCMC tools which updates the component according to the current local information ensures the convergence to the joint distribution under general conditions \cite{Besag1993}, and therefore is widely used in solving MRF-related problems. 
+Sampling from multivariate densities in Gibbs sampling is pretty straigtforward as long as we can derive the conditional probability densities.
+Generally, we first treat the other variables as fixed in the joint probability densities, then we investigate how to sample from the conditional distribution.
+
+In our project, the prior and likelihood are given.
+The prior distribution of the observed data is a Gaussian distribution.
+We apply Gibbs sampling to generate a collection of images from the posterior distribution with known prior density  and likelihood  from a 20 $\times$ 20 pixel image.
+We also compare the images generated from Gibbs samplers with differing $\mathbf{x}^{(0)}$, $\sigma$, and neighborhood structure. 

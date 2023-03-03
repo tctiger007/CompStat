@@ -1,0 +1,57 @@
+\subsection{Algorithm}
+Here, we give a brief description of Gibbs sampling:
+for each pixel, the current value is replaced by a new value that is randomly sampled from the conditional posterior distribution given all other current pixel values $\mathbf{x}_{-i}$ and $\mathbf{y}$. Algorithm \ref{alg:sampling} shows the pesudo code of our method. The parameter of the method is the observed image $\mathbf{x}$, the maximal iteration number, the neighborhood order, and the standard deviation $\sigma$.
+
+We use two different initial starting images $\mathbf{x}^{(0)}$. One is the original image with Gaussian noise, and the other is the true mean value of the original image, which is equal to 57.5. The maximal number of iteration is 100 in each of the case. The order of neighborhood is either first-order or second-order. The tricky part is when getting the neighborhood, we have to handle the pixels on the edge with caution. 
+
+\begin{algorithm}
+\caption{Gibbs sampling for image restoration.}\label{alg:sampling}
+\begin{algorithmic}[1]
+\Function{ImageRestoration}{$\mathbf{x}, T, d, \sigma$}
+\For{$t = 1$ to $T$}
+	\For{$x_i$ in $\mathbf{x}$}
+		\State Get neigborhood $\delta_i$ for pixel $x_i$.
+		\State Compute the number of neighboring pixels $v_i$.
+		\State Compute mean of $\delta_i$: $\bar{x}_{\delta_i} = \frac{1}{v_i}\sum_{j\in\delta_i}{x_j}$.
+    	\State Sample a value following the distribution and update $x_i$: $$f(x_i|\mathbf{x}_{-i}, \mathbf{y}) = \mathcal{N}\left(\frac{1}{v_i+1}y_i+\frac{v_i}{v_i+1}\bar{x}_{\delta_i},\frac{\sigma^2}{v_i+1}\right).$$
+	\EndFor
+\EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Derivation}
+% {\setlength{\parindent}{0cm}
+Let $\mathbf{x}$ be the pixels in the image, $\mathbf{x} = \{x_i\}$, where $i = 1,\dots, n$. In our case, since we have a $20\times 20$ image, $n=400$. $\delta_i$ is the neighborhood of the $i$th pixel $x_i$, $v_i$ is the number of pixels in the neighborhood $\delta_i$. $\bar{x}_{\delta_i}$ is the mean value of all the pixels in the neighborhood $\mathbf{x}_{\delta_i}$. $\mathbf{y} = \{y_i\} $, where $i = 1, \dots, n$,  is the observed image.
+According to the model, we have the prior distribution of the true image:
+\begin{align}
+f(x_i|\mathbf{x}_{\delta_i})=\mathcal{N}\left(\bar{x}_{\delta_i}, \frac{\sigma^2}{v_i}\right),\quad i=1,\dots,n.\end{align}
+and the likelihood of the observed data $y_i$: 
+\begin{align}
+f(y_i|x_i)= \mathcal{N}\left(x_i,\sigma^2\right),\quad i=1,\dots,n.
+\end{align}
+Generally, we know for arbitrary unknown variable $\mathbf{x}$ and $\mathbf{y}$, assumed as a $D$-dimenstional vector, follow distributions: 
+\begin{align}
+f(\mathbf{x})=\mathcal{N}\left(\mathbf{\mu},\Lambda^{-1}\right), \quad f(\mathbf{y}|\mathbf{x})=\mathcal{N}(\mathbf{x},L^{-1}),
+\end{align}
+where $\mathbf{\mu}$ and $\Lambda^{-1}$ is the mean and covariance matrix of $\mathbf{x}$, and $L^{-1}$ is the covariance matrix of $\mathbf{y}$ conditioned on $\mathbf{x}$.
+Then using conditional Gaussian and Baysian rule, we have
+\begin{align}
+\begin{split}
+f(\mathbf{x}|\mathbf{y}) & = \frac{f(\mathbf{y}|\mathbf{x})\cdot f(\mathbf{x})}{f(\mathbf{y})} \\
+						 & =\mathcal{N}\left((\Lambda+L)^{-1}(\Lambda{\mathbf{\mu}} + L\mathbf{y}),(\Lambda+L)^{-1}\right).
+\end{split}
+\end{align}
+In our case, $\mathbf{\mu}=\bar{x}_{\delta_i},\Lambda=\frac{v_i}{\sigma^2}, L = \frac{1}{\sigma^2}$. Note they are real values since $x_i$ is a univariate variable.
+With the Markov property, $f(x_i|\mathbf{x}_{-i}) = f(x_i|\mathbf{x}_{\delta_i})$. Therefore, we have
+\begin{align}
+\begin{split}
+f(x_i|\mathbf{x}_{-i}, y_i) & \propto f(x_i|\mathbf{x}_{-i})f(y_i|x_i) \\
+							& = f(x_i|\mathbf{x}_{\delta_i})f(y_i|x_i) \\
+    & =\mathcal{N}\left[\left(\frac{v_i}{\sigma^2}+\frac{1}{\sigma^2}\right)^{-1} \cdot \left(\frac{v_i}{\sigma^2}\cdot\bar{x}_{\delta_i} + \frac{1}{\sigma^2}\cdot y_i\right),\left(\frac{v_i}{\sigma^2}+\frac{1}{\sigma^2}\right)^{-1}\right]\\
+    & =\mathcal{N}\left(\frac{1}{v_i+1}y_i+\frac{v_i}{v_i+1}\bar{x}_{\delta_i},\frac{\sigma^2}{v_i+1}\right).
+\end{split}
+\end{align}
+% }
+
+The aforementioned part is a brief derivation of the univariate conditional posterior distribution used for Gibbs sampling. A more detailed explanation is shown in \textbf{Appendix}.

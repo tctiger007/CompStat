@@ -1,0 +1,190 @@
+In the appendix, we provide detailed derivation of the univariate conditional posterior distribution used for Gibbs sampling for the project. For the purpose of generation, we consider derivation on multivariate Gaussian, which could be easily applied to univariate case. Part of the derivation was obtained in \cite{Bishop:2006:PRM:1162264}.
+\subsection{Conditional Gaussian Distributions}
+{\setlength{\parindent}{0cm}
+One important property of Gaussian distribution is that if two sets of variables are jointly Gaussian, then the conditional distribution of one set conditioned on the other is again Gaussian.
+Suppose $\mathbf{x}$ is a $D$-dimenstional vector and follows Gaussian distribution $\mathcal{N}\left(\mathbf{\mu},\Sigma\right)$, where $\mathbf{\mu}$ and $\Sigma$ are the mean and covariance matrix of $\mathbf{x}$.
+
+We partition $\mathbf{x}$ into two disjoint subsets $\mathbf{x}_a$ and $\mathbf{x}_b$, suppose $\mathbf{x}_a$ is the first $M$ component of $\mathbf{x}$ and $\mathbf{x}_b$ is the remaining $D-M$ components. Define $\Lambda = \Sigma^{-1}$ as the precision matrix, which is the inverse of the covariance matrix $\Sigma$. Then we have the corresponding mean vector $\mathbf{\mu}$ and precision matrix
+\begin{align}
+\mathbf{x}=\begin{pmatrix} \mathbf{x}_a \\ \mathbf{x}_b \end{pmatrix}
+\quad
+\mathbf{\mu}=\begin{pmatrix} \mathbf{\mu}_a \\ \mathbf{\mu}_b \end{pmatrix}
+\quad
+\Sigma = \begin{pmatrix} 
+\Sigma_{aa} & \Sigma_{ab} \\
+\Sigma_{ab}^{T} & \Sigma_{bb} 
+\end{pmatrix}
+\quad
+\Lambda = \Sigma^{-1}=\begin{pmatrix} 
+\Lambda_{aa} & \Lambda_{ab} \\
+\Lambda_{ab}^{T} & \Lambda_{bb} 
+\end{pmatrix}
+\label{eq:partition}
+\end{align}
+
+Note that since $\Sigma$ is symmetric, $\Lambda_{aa}$ and $\Lambda_{bb}$ are also symmetric, when $\Lambda_{ab}^T = \Lambda_{ba}$.
+
+To find the conditional distribution of $f(\mathbf{x}_a|\mathbf{x}_b)$, we could start with the joint distribution $f(\mathbf{x}) = f(\mathbf{x}_a, \mathbf{x}_b)$. Making use of the partition in equation (\ref{eq:partition}), we obtain
+\begin{align}
+\begin{split}
+-\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^T\Sigma^{-1}(\mathbf{x}-\mathbf{\mu}) =  & -\frac{1}{2}(\mathbf{x}_a-\mathbf{\mu}_{a})^{T}\Lambda_{aa}(\mathbf{x}_a-\mathbf{\mu}_{a})-\frac{1}{2}(\mathbf{x}_a-\mathbf{\mu}_{a})^{T}\Lambda_{ab}(\mathbf{x}_b-\mathbf{\mu}_{b}) \\
+                                                & -\frac{1}{2}(\mathbf{x}_b-\mathbf{\mu}_{b})^{T}\Lambda_{ba}(\mathbf{x}_a-\mathbf{\mu}_{a})
+-\frac{1}{2}(\mathbf{x}_b-\mathbf{\mu}_{b})^{T}\Lambda_{bb}(\mathbf{x}_b-\mathbf{\mu}_{b})
+\end{split}
+\label{eq:joint-ab}
+\end{align}
+If we see equation (\ref{eq:joint-ab}) as a function of $\mathbf{x}_a$, it is a quadratic form. Therefore we the conditional probability $f(\mathbf{x}_a|\mathbf{x}_b)$ will be a Gaussian.
+
+Note
+\begin{align}
+\mathcal{N}(\mathbf{\mu},\Sigma) \propto \exp \left[-\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^T\Sigma^{-1}(\mathbf{x}-\mathbf{\mu})\right]
+\end{align}
+
+We only consider the quadratic form in the exponent of the distribution, by expanding it and using the symmetry of $\Sigma$, we have
+\begin{align}
+-\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^T\Sigma^{-1}(\mathbf{x}-\mathbf{\mu})=-\frac{1}{2}\mathbf{x}^T\Sigma^{-1}\mathbf{x}+\mathbf{x}^T\Sigma^{-1}\mathbf{\mu}+\text{const}
+\label{eq:expand}
+\end{align}
+where `const' are the terms that are independent of $\mathbf{x}$. As a common operation, sometimes called `completing the square', we can obtain the covariance matrix by looking at the quadratic term $-\frac{1}{2}\mathbf{x}^T\Sigma^{-1}\mathbf{x}$ and the second order term of the right side of equation (\ref{eq:expand}), which is $\mathbf{x}^T\Sigma^{-1}\mathbf{\mu}$, we can get the mean $\mathbf{\mu}$. 
+Using the same trick for $f(\mathbf{x}_a|\mathbf{x}_b)$ in equation (\ref{eq:joint-ab}), we fix $\mathbf{x}_a$ and treat $\mathbf{x}_b$ as constant. We can obtaind the covariance matrix $\Sigma_{a|b}$ from the quadratic term  
+\begin{align}
+-\frac{1}{2}\mathbf{x}_a^{T}\Lambda_{aa}\mathbf{x}_a\:\Rightarrow\:\Sigma_{a|b}=\Lambda_{aa}^{-1}.
+\label{eq:cov}
+\end{align}
+Next look at the remaining terms that are linear in $\mathbf{x}_a$ in equation (\ref{eq:joint-ab}), 
+\begin{align}
+\mathbf{x}_a^{T}[\Lambda_{aa}\mathbf{\mu}_a-\Lambda_{ab}(\mathbf{x}_b-\mathbf{\mu}_b)]
+\end{align}
+the coefficient of $\mathbf{x}_a$ must equal $\Sigma_{a|b}^{-1}\mathbf{\mu}_{a|b}$:
+\begin{align}
+\begin{split}
+\mathbf{\mu}_{a|b} & =\Sigma_{a|b}[\Lambda_{aa}\mathbf{\mu}_a-\Lambda_{ab}(\mathbf{x}_b-\mathbf{\mu}_b)] \\
+& =\mathbf{\mu}_a-\Lambda_{aa}^{-1}\Lambda_{ab}(\mathbf{x}_b-\mathbf{\mu}_b)
+\end{split}
+\label{eq:mean}
+\end{align}
+
+So far we have the mean vector and the covariance matrix in the form of the partitioned precision matrix of the original joint distribution $f(\mathbf{x}_a, \mathbf{x}_b)$, we can express them in the form of the original partitioned covariance matrix.
+Using Schur Complement Theory:
+\begin{align}
+\begin{pmatrix} 
+A & B \\
+C & D 
+\end{pmatrix}^{-1}
+=\begin{pmatrix} 
+M & -MBD^{-1} \\
+-D^{-1}CM & D^{-1}+D^{-1}CMBD^{-1} 
+\end{pmatrix}
+\label{eq:schur}
+\end{align}
+where $M = (A-BD^{-1}C)^{-1}$, which is the \emph{Schur complement} of the submatrix $D$ on the left side of equation (\ref{eq:schur}).
+
+Using the above Schur Complement Theory, we have 
+\begin{align}
+\begin{split}
+\Lambda_{aa} & =(\Sigma_{aa}-\Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba})^{-1} \\
+\Lambda_{aa} & = -(\Sigma_{aa}-\Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba})^{-1}\Sigma_{ab}\Sigma_{bb}^{-1}.
+\end{split}
+\end{align}
+
+Finally we get the mean vector and covariance matrix of $f(\mathbf{x}_a|\mathbf{x}_b)$ in the form of original covariance matrix.
+\begin{align}
+\begin{split}
+\mathbf{\mu}_{a|b} & = \mathbf{\mu}_a + \Sigma_{ab}\Sigma_{bb}^{-1}(\mathbf{x}_b - \mathbf{\mu}_b) \\
+\Sigma_{a|b} & = \Sigma_{aa}-\Sigma_{ab}\Sigma_{bb}^{-1}\Sigma_{ba}
+\end{split}
+\end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Bayes' Rule for Gaussian Variables}
+Suppose $\mathbf{x}$ and $\mathbf{y}$ are two $D$-dimenstional vectors and follow
+\begin{align}
+f(\mathbf{x})=\mathcal{N}\left(\mathbf{\mu},\Lambda^{-1}\right), \quad f(\mathbf{y}|\mathbf{x})=\mathcal{N}(\mathbf{x},L^{-1}),
+\end{align}
+where $\mathbf{\mu}$ is the mean of $\mathbf{x}$, $\Lambda$ is the precision matrix, which is the inverse of the covariance matrix $\Sigma$. Similarly, $L$ is the precision matrix of $\mathbf{y}$ conditioned on $\mathbf{x}$.
+
+Now assume
+\begin{align}
+\mathbf{y}=A\mathbf{x}+\mathbf{b}, \quad \mathbf{x}\sim\mathcal{N}(\mu,\Lambda^{-1}),\quad \mathbf{y}|\mathbf{x}\sim\mathcal{N}(A\mathbf{x}+\mathbf{b},L^{-1}).
+\end{align}
+We want to find $f(\mathbf{x}|\mathbf{y})$, first find an expression for the joint distribution over $\mathbf{x}$ and $\mathbf{y}$. Now we define 
+$\mathbf{z} = \begin{pmatrix} \mathbf{x} & \mathbf{y} \end{pmatrix}^{T}$
+and consider the log of the joint distribution
+\begin{align}
+\begin{split}
+\log f(\mathbf{z}) = &  \log f(\mathbf{x}) + \log f(\mathbf{y}|\mathbf{x}) \\
+     = 	&-\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^T\Lambda(\mathbf{x}-\mathbf{\mu}) \\
+     	& -\frac{1}{2}(\mathbf{y}-A\mathbf{x}-\mathbf{b})^TL(\mathbf{y}-Ax-\mathbf{b}) + \text{const}
+\end{split}
+\label{eq:jointp}
+\end{align}
+where the `const' term is independent of $\mathbf{x}$ and $\mathbf{y}$. Since this is a quadractic function of the component $\mathbf{z}$, $f(\mathbf{z})$ should be a Gaussian distribution. To find the precision matrix, we consider the second term in the above equation (\ref{eq:jointp}). 
+\begin{align}
+\begin{split}
+& -\frac{1}{2}(\mathbf{y}-A\mathbf{x}-\mathbf{b})^TL(\mathbf{y}-Ax-\mathbf{b})\\
+     = & -\frac{1}{2}\mathbf{x}^T(\Lambda+A^TLA)\mathbf{x}-\frac{1}{2}\mathbf{y}^{T}L\mathbf{y}+\frac{1}{2}\mathbf{x}^T(A^TL)\mathbf{y}+\frac{1}{2}\mathbf{y}^T(LA)\mathbf{x} \\
+     =	& -\frac{1}{2}\begin{pmatrix} \mathbf{x} \\ \mathbf{y} \end{pmatrix}^T\underbrace {\begin{pmatrix} 
+        \Lambda+A^{T}LA &-A^{T}L  \\
+        -LA & L 
+        \end{pmatrix}}_{\text R}\begin{pmatrix} \mathbf{x} \\ \mathbf{y} \end{pmatrix}\\
+     = & -\frac{1}{2}\mathbf{z}^TR\mathbf{z}.
+     \end{split}
+\end{align}
+So the Gaussian distribution over $\mathbf{z}$ has precision matrix given by 
+$$R = \begin{pmatrix} 
+        \Lambda+A^{T}LA &-A^{T}L  \\
+        -LA & L 
+        \end{pmatrix}.$$
+The covariance is found by taking the inverse of $R$
+\begin{align}
+\begin{split}
+\text{cov}(\mathbf{z})=R^{-1}= & \begin{pmatrix} 
+\Lambda^{-1} & \Lambda^{-1}A^T \\
+A\Lambda^{-1} & L^{-1}+A\Lambda^{-1}A^T
+\end{pmatrix} 
+\end{split}
+\end{align}
+Similarly we can find the mean of Gaussian distribution over $\mathbf{z}$ by identifying the linear term in equation (\ref{eq:jointp})
+\begin{align}
+\begin{split}
+\mathbf{x}^T\Lambda\mathbf{\mu}-\mathbf{x}^TA^TL\mathbf{b}+\mathbf{y}^TL\mathbf{b} = & \begin{pmatrix} 
+\mathbf{x} \\ \mathbf{y} 
+\end{pmatrix}^T\begin{pmatrix} 
+\Lambda\mathbf{\mu}-A^TL\mathbf{b} \\ L\mathbf{b} 
+\end{pmatrix}
+\end{split}
+\end{align}
+We can obtain the mean of $\mathbf{z}$
+\begin{align}
+\begin{split}
+\mathbb{E}[\mathbf{z}] = R^{-1}\begin{pmatrix} 
+\Lambda\mathbf{\mu}-A^TL\mathbf{b} \\ L\mathbf{b} 
+\end{pmatrix}^T
+% = & \mathbf{z}\Sigma_a^{-1}\mathbf{\mu}_\mathbf{z} \\
+= \begin{pmatrix} 
+\mathbf{\mu} \\ A\mathbf{\mu}+\mathbf{b}
+\end{pmatrix}.
+\end{split}
+\end{align}
+Next we find an expression for the marginal distrbution $f(\mathbf{y})$ by marginalizing $\mathbf{x}$. The mean could be obtained by looking at the linear term, similarly with what we did in equation (\ref{eq:expand}).
+\begin{align}
+\mathbb{E}[\mathbf{y}]= & A\mathbf{\mu}+\mathbf{b}\\
+\text{cov}[\mathbf{y}]= & R_{2,2}^{-1}=L^{-1}+A\Lambda^{-1}A^T. 
+\end{align}
+Finally we get expression for $f(\mathbf{x}|\mathbf{y})$ from what we got in equation (\ref{eq:mean}).
+\begin{align}
+\begin{split}
+\mathbb{E}[\mathbf{x}|\mathbf{y}] & = (\Lambda+A^TLA)^{-1}(\Lambda\mathbf{\mu}+A^TL(\mathbf{y}-\mathbf{b})) \\
+\text{cov}[\mathbf{x}|\mathbf{y}] & = (\Lambda+A^TLA)^{-1}
+\end{split}
+\end{align}
+% \begin{align}\mathbb{E}[\mathbf{x}|\mathbf{y}]=\underbrace{(\Lambda+A^TLA)^{-1}}_{\mathbf{z}_{a|b}=\Lambda_{aa}^{-1}=\Sigma_{\mathbf{x}|\mathbf{y}}=(\mathbf{x}+A^TLA)^{-1}}(\Lambda\mathbf{\mu}+A^TL(\mathbf{y}-\mathbf{b}))
+% \end{align}
+More specifically, in our case, $A = I$, $b = 0$, and $\mathbf{x}$ and $\mathbf{y}$ are univariate variables. We have 
+\begin{align}
+\begin{split}
+\mathbb{E}[\mathbf{x}|\mathbf{y}] & =(\Lambda+L)^{-1}(\Lambda\mathbf{\mu}+L\mathbf{y}) \\
+\text{cov}[\mathbf{x}|\mathbf{y}] & = (\Lambda+L)^{-1}
+\end{split}
+\end{align}
+}

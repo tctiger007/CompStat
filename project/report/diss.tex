@@ -1,0 +1,12 @@
+From the above result, we are able to restore the original image quite well. The mean image in every case is pretty smooth since it is averaged over 100 images.
+$\sigma$ seems to be a more important factor to the sampled images compared with neighborhood structure.
+In the posterior distribution, variance is equal to $\frac{\sigma^2}{v_i+1}$.
+When $\sigma$ changes, the variance changes in the order of $\sigma^2$ when the neighborhood structure is fixed. 
+But when neighborhood structure changes and $\sigma$ is fixed, the variance only changes by a factor of $(\frac{1}{5}\sim\frac{1}{9})$.
+The mean of the posterior distribution depends on the data, but the order of the difference between mean is only a linear combination of $y_i$ and $\bar{x}_{\delta_i}$. The difference between the observed data is not very significant as long as we have a correct model. 
+In this sense, $\sigma$ is a more significant factor.
+
+In terms of sampling, initial starting $\mathbf{x}^{(0)}$ is not very important for restoring the image, indicating the Markov chain moves fast from the initial $\mathbf{x}^{(0)}$ and converges to roughly the same result after some iterations. 
+
+In summary, $\sigma=5$ works the best, and first-order neighborhood is slightly better than second-order. 
+The initial $\mathbf{x}^{(0)}=57.5$ works similar as $\mathbf{x}^{(0)}$ as the observed data.

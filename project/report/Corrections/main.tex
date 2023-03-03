@@ -1,0 +1,82 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{caption}
+\usepackage{subcaption} 
+\newenvironment{problem}[2][Problem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\usepackage{graphicx} % for '\resizebox` macro
+\usepackage{float}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\usepackage[autostyle]{csquotes}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tabularx}
+\usepackage{lmodern}  % for bold teletype font
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage{titling}
+\usepackage{mwe}
+\usepackage{textcomp}
+\usepackage{algorithm}
+% \usepackage{algorBithmicx}
+\usepackage{algpseudocode}
+
+\lstset{
+    frame=tb, % draw a frame at the top and bottom of the code block
+    tabsize=4, % tab space width
+    showstringspaces=false, % don't mark spaces in strings
+    numbers=left, % display line numbers on the left
+    commentstyle=\color{ForestGreen}, % comment color
+    keywordstyle=\color{blue}, % keyword color
+    %stringstyle=\color{red}, % string color
+    basicstyle=\footnotesize\ttfamily,breaklines=true,
+    columns=fullflexible,
+    frame=single,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    upquote=true,
+}
+% \setlength{\belowcaptionskip}{-8pt}
+
+\title{\Huge \textbf{STAT451 Project}   \\ \huge Binary pixel image }
+
+\author{\textsc{Yanzi Jin} \\\textsc{Niloufar Dousti Mousavi}\\ \textsc{Wangfei Wang}}
+\date{\vspace{-5ex}}
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\clearpage
+\setcounter{page}{1}
+
+
+\input{abstract.tex}
+
+\section{Introduction}
+\input{intro.tex}
+
+\section{Gibbs Sampling}
+\input{method.tex}
+
+\section{Results}
+\input{result.tex}
+
+\section{Discussion}
+\input{diss.tex}
+
+\section{Contribution}
+\input{contribution.tex}
+
+\newpage
+\section{Appendix}
+\input{appendix.tex}
+
+% \clearpage
+
+\bibliographystyle{unsrt} 
+\bibliography{stat451project} 
+
+\end{document}
+
