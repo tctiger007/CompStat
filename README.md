@@ -1,1 +1,1 @@
-# Computational Statistics Course
+## Computational Statistics Course
